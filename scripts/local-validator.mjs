@@ -135,6 +135,23 @@ try {
   assert.equal(await rpc.getBalance(feeRecipient.address, { commitment: 'confirmed' }).send().then((x) => x.value), recipientStartingBalance + 2_468n);
   checks.push('V1 upload resumes at the exact byte offset; rejected offset leaves the payload intact and finalizes successfully');
 
+  const publicTitle = Buffer.from('TimeCapsule local public · 时间胶囊', 'utf8');
+  const publicPayload = Buffer.from('Synthetic opaque V1 public payload; the program does not encrypt it.', 'utf8');
+  const publicHash = createHash('sha256').update(publicPayload).digest();
+  const publicPda = await capsulePda(admin.address, 7n);
+  const publicUnlockAt = BigInt(Math.floor(Date.now() / 1_000) + 3_600);
+  assert.equal((await submit(rpc, admin, beginCapsule({
+    owner: admin, config, capsule: publicPda, id: 7n, unlockAt: publicUnlockAt,
+    mode: 0, version: 1, payloadLength: publicPayload.length, payloadHash: publicHash, titleLength: publicTitle.length,
+  }))).err, null);
+  assert.equal((await submit(rpc, admin, writeTitleChunk(admin, publicPda, 0, publicTitle.subarray(0, 7)))).err, null);
+  assert.equal((await submit(rpc, admin, writeTitleChunk(admin, publicPda, 7, publicTitle.subarray(7)))).err, null);
+  assert.equal((await submit(rpc, admin, writeChunk(admin, publicPda, 0, publicPayload))).err, null);
+  assert.equal((await submit(rpc, admin, finalizeCapsule(admin, config, publicPda, feeRecipient.address, feePolicy, publicUnlockAt))).err, null);
+  await assertCapsule(rpc, publicPda, { version: 1, mode: 0, payload: publicPayload, payloadHash: publicHash, title: publicTitle });
+  assert.equal(await rpc.getBalance(feeRecipient.address, { commitment: 'confirmed' }).send().then((x) => x.value), recipientStartingBalance + 3_702n);
+  checks.push('public V1 title chunks, exact UTF-8 title and payload readback, and fixed fee settlement');
+
   const maxPda = await capsulePda(admin.address, 3n);
   const maxHash = createHash('sha256').update(Buffer.alloc(65_536)).digest();
   const maxBegin = await submit(rpc, admin, beginCapsule({
@@ -247,14 +264,14 @@ function instruction(name, accounts, args = Buffer.alloc(0)) {
   return { programAddress: programId, accounts, data: Buffer.concat([Buffer.from(item.discriminator), args]) };
 }
 
-function beginCapsule({ owner, config: configPda, capsule, id, unlockAt, mode, version, payloadLength, payloadHash }) {
+function beginCapsule({ owner, config: configPda, capsule, id, unlockAt, mode, version, payloadLength, payloadHash, titleLength = 0 }) {
   return instruction('begin_capsule', [
     account(owner.address, AccountRole.WRITABLE_SIGNER, owner),
     account(configPda, AccountRole.READONLY),
     account(capsule, AccountRole.WRITABLE),
     account(systemProgram, AccountRole.READONLY),
   ], Buffer.concat([
-    u64(id), i64(unlockAt), u8(mode), u16(version), u32(payloadLength), payloadHash, u16(0),
+    u64(id), i64(unlockAt), u8(mode), u16(version), u32(payloadLength), payloadHash, u16(titleLength),
   ]));
 }
 
@@ -263,6 +280,13 @@ function writeChunk(owner, capsule, offset, chunk) {
     account(owner.address, AccountRole.READONLY_SIGNER, owner),
     account(capsule, AccountRole.WRITABLE),
   ], Buffer.concat([u32(offset), u32(chunk.length), chunk]));
+}
+
+function writeTitleChunk(owner, capsule, offset, chunk) {
+  return instruction('write_title_chunk', [
+    account(owner.address, AccountRole.READONLY_SIGNER, owner),
+    account(capsule, AccountRole.WRITABLE),
+  ], Buffer.concat([u16(offset), u32(chunk.length), chunk]));
 }
 
 function finalizeCapsule(owner, configPda, capsule, recipient, policy, unlockAt, validUntil = unlockAt - 3_300n) {
@@ -309,8 +333,13 @@ async function assertCapsule(rpc, capsule, expected) {
   assert.equal(data.readUInt32LE(69), expected.payload.length);
   assert.equal(data.readUInt32LE(73), expected.payload.length);
   assert.deepEqual(data.subarray(77, 109), expected.payloadHash);
-  assert.equal(data.readUInt32LE(133), expected.payload.length);
-  assert.deepEqual(data.subarray(137, 137 + expected.payload.length), expected.payload);
+  const title = expected.title ?? Buffer.alloc(0);
+  assert.equal(data.readUInt16LE(109), title.length);
+  assert.equal(data.readUInt16LE(111), title.length);
+  assert.equal(data.readUInt32LE(113), title.length);
+  assert.deepEqual(data.subarray(117, 117 + title.length), title);
+  assert.equal(data.readUInt32LE(133 + title.length), expected.payload.length);
+  assert.deepEqual(data.subarray(137 + title.length), expected.payload);
 }
 
 function u8(value) { return Buffer.from([value]); }

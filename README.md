@@ -6,6 +6,8 @@ Solana stores the complete payload in a program-derived account (PDA), rather th
 
 The website retains TimeCapsule's original interface with a frontend-only architecture: browser encryption, Phantom wallet signing and direct chain reads. It includes the early V1 time-lock codec and direct recovery. The full application's backend, database, account system, V2 shared-memory implementation and private operational configuration are outside this repository. Ciphertext and metadata are publicly readable on Solana. The browser codec uses drand time-release encryption; the on-chain program stores and verifies opaque bytes.
 
+Reviewers can follow the [quick-start and source map](docs/REVIEWER_GUIDE.md) to open an existing public capsule without a wallet, reproduce the included Solana workflow and run the checks.
+
 ## Run the website
 
 ```sh
@@ -52,7 +54,7 @@ npm run build:program
 npm run test:local
 ```
 
-The demonstration starts a validator on `127.0.0.1`, loads the locally built program, generates temporary signers in memory and funds them using the local faucet. It initializes a synthetic fixed-fee policy, publishes and reads back private-mode V1/V2 test records, verifies exact SHA-256 bytes and fee transfers, checks invalid offsets and format versions, and cancels a maximum-size reservation. It stops the validator and removes its temporary ledger on exit. Ports 19489, 19498, 19499 and 19500–19540 must be free.
+The demonstration starts a validator on `127.0.0.1`, loads the locally built program, generates temporary signers in memory and funds them using the local faucet. It initializes a synthetic fixed-fee policy, publishes and reads back a public V1 record with UTF-8 title chunks and private-mode V1/V2 test records, verifies exact SHA-256 bytes and fee transfers, checks invalid offsets and format versions, and cancels a maximum-size reservation. It stops the validator and removes its temporary ledger on exit. Ports 19489, 19498, 19499 and 19500–19540 must be free.
 
 The 65,536-byte case tests reservation and cancellation only; it does not prove that a payload of that size can be uploaded or finalized. The current application restricts Solana to text and caps ciphertext plus public-title bytes at **8,192 bytes** before any wallet or RPC request. The program retains its historical 65,536-byte serialized payload ceiling; the current default runtime heap does not safely support full records at that ceiling. This extracted release preserves the program behavior.
 

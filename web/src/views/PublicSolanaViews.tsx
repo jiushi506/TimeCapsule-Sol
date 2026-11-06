@@ -3,6 +3,11 @@ import {
   getCapsuleLabel,
   saveCapsuleLabel,
 } from "../services/localCapsuleLabelService";
+import {
+  finishLocalSolanaPublication,
+  type LocalPublicationContext,
+  type LocalPublicationResult,
+} from "../services/localSolanaPublication";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   Copy,
@@ -75,6 +80,7 @@ import {
   submitSolanaCapsule,
   exportSolanaRecoveryCard,
   getPendingSolanaUpload,
+  clearPendingSolanaUpload,
   decodeSolanaUploadDraftPayload,
   reconcileCompletedSolanaUpload,
   cancelSolanaUpload,
@@ -157,7 +163,12 @@ export function CreateView({
   const [pending, setPending] = useState<SolanaUploadDraft | null>(() =>
     getPendingSolanaUpload(),
   );
-  const [success, setSuccess] = useState<SolanaRecoveryCard | null>(null);
+  const [success, setSuccess] = useState<({
+    card: SolanaRecoveryCard;
+    publicTitle: string;
+    protocolFeePaidLamports?: bigint;
+  } & LocalPublicationResult) | null>(null);
+  const localReview = useRef<LocalPublicationContext | null>(null);
   const ownerRef = useRef(wallet.address);
   ownerRef.current = wallet.address;
   useEffect(() => {
@@ -181,10 +192,16 @@ export function CreateView({
     };
   }, [feeRefresh]);
   useEffect(() => {
+    ownerRef.current = wallet.address;
     setQuote(null);
     setPayload(null);
     setConfirm(false);
+    setSuccess(null);
+    localReview.current = null;
     setPending(getPendingSolanaUpload());
+    return () => {
+      ownerRef.current = null;
+    };
   }, [wallet.address]);
   useEffect(() => {
     const id = getActiveLocalDraftId(scope.key);
@@ -267,11 +284,15 @@ export function CreateView({
     setConfirm(false);
     void run(async () => {
       const owner = wallet.address!;
+      const mode = composer.mode;
+      const publicTitle = composer.normalizedPublicTitle;
+      const localLabel = composer.localLabel;
+      const draftId = composer.draftId;
       setStatus("Encrypting this text in your browser…");
       const sealed = await sealCapsulePayload({
         message: composer.message,
-        mode: composer.mode,
-        password: composer.mode === "private" ? composer.password : undefined,
+        mode,
+        password: mode === "private" ? composer.password : undefined,
         unlockAt: Math.floor(
           parseUtcInput(composer.unlockDate).getTime() / 1000,
         ),
@@ -279,25 +300,73 @@ export function CreateView({
       const next = await createSolanaSealQuote({
         owner,
         payloadBytes: sealed.payloadBytes,
-        mode: composer.mode,
-        publicTitle: composer.normalizedPublicTitle,
+        mode,
+        publicTitle,
         unlockAt: sealed.unlockAt,
       });
       if (ownerRef.current !== owner)
         throw new Error("The wallet changed. Prepare a new review.");
+      localReview.current = {
+        owner,
+        payloadHash: sealed.payloadHash,
+        localLabel,
+        draftId,
+      };
       setPayload(sealed);
       setReviewOwner(owner);
       setQuote(next);
       setStatus("");
     });
   }
+  function finishUpload(result: {
+    record: SolanaCapsuleRecord;
+    card: SolanaRecoveryCard;
+    protocolFeePaidLamports?: bigint;
+  }) {
+    if (ownerRef.current !== result.record.owner)
+      throw new Error(
+        "The wallet or page changed. Reconnect the original account and resume to recover its confirmed capsule.",
+      );
+    const context = localReview.current;
+    let localResult: LocalPublicationResult = {};
+    if (
+      context?.owner === result.record.owner &&
+      context.payloadHash === result.record.payloadHash
+    ) {
+      localResult = finishLocalSolanaPublication(result.record, context);
+      composer.setMessage("");
+      composer.setPassword("");
+      composer.setLocalLabel("");
+      composer.setDraftId(null);
+      composer.setDraftSavedNotice(false);
+    }
+    try {
+      clearPendingSolanaUpload(result.record);
+    } catch {
+      localResult.draftCleanupError ??= "The capsule is confirmed, but this browser could not clear its encrypted upload marker. Resume will recheck the completed capsule before any new wallet request.";
+    }
+    setSuccess({
+      card: result.card,
+      publicTitle: result.record.publicTitle,
+      protocolFeePaidLamports: result.protocolFeePaidLamports,
+      ...localResult,
+    });
+    localReview.current = null;
+    setQuote(null);
+    setPayload(null);
+    setError(localResult.draftCleanupError ?? null);
+    setStatus("");
+    void wallet.refreshBalance();
+  }
   function resume() {
     void run(async () => {
       if (!pending || pending.owner !== wallet.address)
         throw new Error("Connect the original Phantom account.");
-      const completed = await reconcileCompletedSolanaUpload(pending);
+      const completed = await reconcileCompletedSolanaUpload(pending, {
+        retainCompletedDraft: true,
+      });
       if (completed) {
-        setSuccess(completed.card);
+        finishUpload(completed);
         return;
       }
       const bytes = decodeSolanaUploadDraftPayload(pending);
@@ -309,6 +378,8 @@ export function CreateView({
         capsuleId: pending.capsuleId,
         unlockAt: pending.unlockAt,
       });
+      if (ownerRef.current !== pending.owner)
+        throw new Error("The wallet changed. Reconnect the original account to resume this upload.");
       composer.setMode(pending.mode);
       composer.setPublicTitle(pending.publicTitle);
       setPayload({
@@ -342,14 +413,10 @@ export function CreateView({
         payloadHash: payload.payloadHash,
         publicTitle: pending?.publicTitle ?? composer.normalizedPublicTitle,
         resumeDraft: pending,
+        retainCompletedDraft: true,
         onStatus: setStatus,
       });
-      setSuccess(result.card);
-      setQuote(null);
-      setPayload(null);
-      composer.setMessage("");
-      composer.setPassword("");
-      void wallet.refreshBalance();
+      finishUpload(result);
     });
   }
   return (
@@ -396,6 +463,7 @@ export function CreateView({
                   );
                   setQuote(null);
                   setPayload(null);
+                  localReview.current = null;
                 })
               }
             >
@@ -541,8 +609,11 @@ export function CreateView({
       )}
       {success && (
         <SolanaCapsuleSuccessModal
-          card={success}
-          publicTitle={composer.normalizedPublicTitle}
+          card={success.card}
+          publicTitle={success.publicTitle}
+          localLabelSaved={success.localLabelSaved}
+          localLabelSaveError={success.localLabelSaveError}
+          protocolFeePaidLamports={success.protocolFeePaidLamports}
           onClose={() => setSuccess(null)}
           onViewMy={() => {
             setSuccess(null);
@@ -606,6 +677,7 @@ export function MyView({
   const [reminder, setReminder] = useState<SolanaCapsuleRecord | null>(null);
   const [poster, setPoster] = useState<SolanaCapsuleRecord | null>(null);
   const [, updateLabels] = useState(0);
+  const [, updateDrafts] = useState(0);
   const request = useRef(0);
   const drafts = getLocalDrafts(scope.key);
   function close() {
@@ -656,7 +728,11 @@ export function MyView({
         onChange={setTab}
       />
       {tab === "drafts" ? (
-        <PortfolioDrafts drafts={drafts} onNavigate={onNavigate} />
+        <PortfolioDrafts
+          drafts={drafts}
+          onNavigate={onNavigate}
+          onDelete={() => updateDrafts((v) => v + 1)}
+        />
       ) : !wallet.isConnected ? (
         <WalletSignInPanel returnTo="/#/my" />
       ) : data.loading ? (

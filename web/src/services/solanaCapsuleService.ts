@@ -57,7 +57,7 @@ export const SOLANA_ACCOUNT_FIXED_SPACE = 137;
 export const SOLANA_SAFE_RECORD_BYTES = 8 * 1024;
 function assertSolanaSafeRecordSize(payloadBytes: number, titleBytes: number): void {
   if (payloadBytes + titleBytes > SOLANA_SAFE_RECORD_BYTES) {
-    throw new Error(`This Solana memory is ${(payloadBytes + titleBytes).toLocaleString()} encrypted bytes; the current Solana program supports up to ${SOLANA_SAFE_RECORD_BYTES.toLocaleString()} bytes including any public title. Shorten the text or use an EVM network. No wallet request was sent.`);
+    throw new Error(`This Solana memory is ${(payloadBytes + titleBytes).toLocaleString()} encrypted bytes; the current Solana program supports up to ${SOLANA_SAFE_RECORD_BYTES.toLocaleString()} bytes including any public title. Shorten the text. No wallet request was sent.`);
   }
 }
 export const SOLANA_UPLOAD_DRAFT_KEY = 'timecapsule_public_solana_upload_v1';

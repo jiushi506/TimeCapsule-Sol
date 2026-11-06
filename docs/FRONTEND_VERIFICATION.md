@@ -2,6 +2,15 @@
 
 Verified on 2026-11-06. This release reuses the original TimeCapsule navigation, complete homepage, styles, assets, translations, form components, cards and dialogs, backed by the legacy V1 browser codec and an isolated Solana adapter. The original application checkout was left unchanged.
 
+## Follow-up review — 2026-11-07
+
+- Frontend production build and all 62 client tests passed; all 12 Rust unit tests passed.
+- The local validator demonstration now also publishes and reads back a Public V1 record with a UTF-8 title written in separate chunks, checking its exact title, payload hash and fee transfer.
+- The existing homepage sample PDA was fetched and decrypted again using the checked-in client, without a wallet or application backend. See the [reviewer guide](REVIEWER_GUIDE.md) for the address and verification steps.
+- Publishing now preserves the verified success result when browser housekeeping fails, saves the reviewed private local name, and removes the matching wallet's saved text draft. Regression cases cover mismatched owners/payloads and unavailable browser storage.
+- Browser checks confirmed saving a synthetic local draft and deleting it immediately updates both the list and count. The synthetic saved draft was removed after the check.
+- No Rust program behavior, original styles, private backend or V2 implementation was added or changed.
+
 ## Checks performed
 
 | Check | Result |

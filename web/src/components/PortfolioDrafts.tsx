@@ -4,8 +4,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuthLocalScope } from '../context/useAuthLocalScope';
 import { deleteLocalDraft, setActiveLocalDraftId, type LocalDraft } from '../services/draftService';
 
-export function PortfolioDrafts({ drafts, onNavigate }: {
-  drafts: LocalDraft[]; onNavigate: (tab: string) => void;
+export function PortfolioDrafts({ drafts, onNavigate, onDelete }: {
+  drafts: LocalDraft[]; onNavigate: (tab: string) => void; onDelete?: () => void;
 }) {
   const { t } = useLanguage();
   const localScope = useAuthLocalScope();
@@ -98,6 +98,7 @@ export function PortfolioDrafts({ drafts, onNavigate }: {
                     id={`btn-delete-draft-${d.id}`}
                     onClick={() => {
                       deleteLocalDraft(d.id, localScope);
+                      onDelete?.();
                     }}
                     className="btn-secondary"
                     style={{ padding: '9px 12px', color: '#fb7185' }}

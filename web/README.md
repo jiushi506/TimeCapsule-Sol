@@ -2,6 +2,8 @@
 
 A standalone static frontend for the Solana program in this repository. The original TimeCapsule navigation, full homepage, stylesheets, fonts, images, translations, form components, cards and dialogs are reused directly. The legacy V1 browser codec and independent Solana client supply the behavior. It does not require the full application's login service, database or backend.
 
+For a short evaluation path and an existing wallet-free recovery sample, see the [reviewer guide](../docs/REVIEWER_GUIDE.md).
+
 ## Run locally
 
 Use Node.js 24:
@@ -51,6 +53,7 @@ npm run test:drand
 - Ciphertext plus any public-title bytes are capped at **8,192 bytes before an RPC or wallet request**. Encryption adds overhead, so the plaintext character count is not the storage limit.
 - Interrupted uploads retain ciphertext, public metadata and transaction signatures in browser local storage so they can be reconciled before another wallet request. Plaintext is persisted only when the user explicitly chooses Save as Local Draft, with the original unencrypted-storage disclosure visible. Passphrases and decrypted keys are never included.
 - The client clears cost reviews and decryption state when the wallet account changes. Closing a capsule clears its displayed plaintext and passphrase.
+- A successful publication saves the reviewed private local name and removes its matching saved text draft. Browser housekeeping errors are reported separately from the verified on-chain result.
 - Publishing a memory still requires a real user to review and sign the wallet requests. Automated verification is separate from real-wallet acceptance.
 
 The original sign-in presentation connects a Phantom wallet locally in this edition. It does not contact the private account service or establish a hosted account session.

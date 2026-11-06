@@ -11,6 +11,9 @@ coverage/
 # Environment, credentials, signing material and operator configuration
 .env
 .env.*
+!.env.example
+dist/
+*.tsbuildinfo
 .npmrc
 .cargo/credentials*
 *.keypair.json

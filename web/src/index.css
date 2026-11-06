@@ -1,0 +1,108 @@
+:root {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Space Grotesk", var(--font-sans);
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Color Palette */
+  --bg-deep: #050713;
+  --bg-surface: #0b0f24;
+  --bg-surface-elevated: #111836;
+  --bg-card: rgba(17, 24, 54, 0.75);
+  --bg-card-hover: rgba(26, 37, 77, 0.85);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 240, 255, 0.35);
+  --border-accent: rgba(168, 85, 247, 0.35);
+
+  --cyan-primary: #00f0ff;
+  --cyan-glow: rgba(0, 240, 255, 0.25);
+  --purple-primary: #a855f7;
+  --purple-glow: rgba(168, 85, 247, 0.25);
+  --amber-primary: #f59e0b;
+  --emerald-primary: #10b981;
+  --rose-primary: #f43f5e;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #74839a;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-glow: 0 0 25px rgba(0, 240, 255, 0.15);
+  --shadow-purple: 0 0 30px rgba(168, 85, 247, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(168, 85, 247, 0.12) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(0, 240, 255, 0.1) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 50% 85%,
+      rgba(16, 185, 129, 0.08) 0%,
+      transparent 50%
+    ),
+    linear-gradient(to bottom, rgba(5, 7, 19, 0.95), #050713);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Cosmic Grid Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography Helpers */
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}

@@ -1,0 +1,43 @@
+{
+  "name": "timecapsule-solana-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsx --test src/services/__tests__/*.test.ts",
+    "test:drand": "tsx src/codec/__tests__/drandCompatibility.test.ts",
+    "test:codec": "tsx src/codec/__tests__/codec.test.ts"
+  },
+  "dependencies": {
+    "@solana/kit": "8.4.0",
+    "@solana/wallet-standard-features": "1.5.0",
+    "@solana/web3.js": "1.98.4",
+    "@wallet-standard/app": "1.1.1",
+    "@wallet-standard/base": "1.1.1",
+    "buffer": "6.0.3",
+    "drand-client": "1.2.5",
+    "hash-wasm": "4.12.0",
+    "lucide-react": "1.49.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tlock-js": "0.9.0"
+  },
+  "overrides": {
+    "rpc-websockets": "9.3.8"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.2",
+    "vite": "8.3.6"
+  }
+}

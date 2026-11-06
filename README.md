@@ -4,7 +4,7 @@ TimeCapsule lets people publish encrypted text memories with a future unlock tim
 
 Solana stores the complete payload in a program-derived account (PDA), rather than only a pointer to an external storage service. The program verifies upload integrity and ownership, finalizes the record, and settles the protocol fee in the same transaction. A finalized record can be read directly from Solana without the application backend.
 
-The website follows TimeCapsule's early frontend-only architecture: browser encryption, Phantom wallet signing and direct chain reads. It includes the early V1 time-lock codec and direct recovery. The full application's backend, database, account system, V2 shared-memory implementation and private operational configuration are outside this repository. Ciphertext and metadata are publicly readable on Solana. The browser codec uses drand time-release encryption; the on-chain program stores and verifies opaque bytes.
+The website retains TimeCapsule's original interface with a frontend-only architecture: browser encryption, Phantom wallet signing and direct chain reads. It includes the early V1 time-lock codec and direct recovery. The full application's backend, database, account system, V2 shared-memory implementation and private operational configuration are outside this repository. Ciphertext and metadata are publicly readable on Solana. The browser codec uses drand time-release encryption; the on-chain program stores and verifies opaque bytes.
 
 ## Run the website
 
@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Use Node.js 24. Open the printed local URL; no environment file or backend is required. Connect Phantom with Devnet test SOL to publish, or open the recovery page without a wallet. The website supports English/Chinese, public and private V1 text capsules, fee review, interrupted-upload recovery, direct account reads and recovery-card import/export. Read [the frontend setup and verification guide](web/README.md) for public RPC configuration, static builds and tests.
+Use Node.js 24. Open the printed local URL; no environment file or backend is required. Connect Phantom with Devnet test SOL to publish, or open the recovery page without a wallet. The website preserves the original layout and all nine interface languages, with public and private V1 text capsules, fee review, interrupted-upload recovery, direct account reads and recovery-card import/export. Read [the frontend setup and verification guide](web/README.md) for public RPC configuration, static builds and tests.
 
 ## What is included
 

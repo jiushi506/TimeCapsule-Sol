@@ -78,5 +78,18 @@ export function useWallet() {
       .then(() => wallet?.disconnect?.())
       .catch(() => {});
   }, []);
-  return { owner, provider, connecting, error, connect, disconnect };
+  return {
+    owner,
+    provider,
+    connecting,
+    error,
+    connect,
+    disconnect,
+    clearError: () => setError(""),
+    cancelConnection: () => {
+      version.current++;
+      setConnecting(false);
+      setError("");
+    },
+  };
 }

@@ -1,11 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { App } from "./App";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Buffer } from "buffer";
+import App from "./App";
 import "./index.css";
-import "./App.css";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+if (!(globalThis as any).Buffer) (globalThis as any).Buffer = Buffer;
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
     <App />
-  </React.StrictMode>,
+  </StrictMode>,
 );

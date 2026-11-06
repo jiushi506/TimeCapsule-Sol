@@ -1,0 +1,16 @@
+{
+  "name": "@timecapsule/solana-tools",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.18.0"
+  },
+  "scripts": {
+    "test": "cargo test --locked --workspace",
+    "build:program": "cargo build-sbf --manifest-path programs/time_capsule/Cargo.toml -- --locked",
+    "test:local": "node scripts/local-validator.mjs --so target/deploy/time_capsule.so"
+  },
+  "dependencies": {
+    "@solana/kit": "8.4.0"
+  }
+}

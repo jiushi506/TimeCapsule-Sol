@@ -1,0 +1,28 @@
+# Generated build output and local validator state
+target/
+node_modules/
+.anchor/
+test-ledger/
+ledger/
+coverage/
+*.log
+.DS_Store
+
+# Environment, credentials, signing material and operator configuration
+.env
+.env.*
+.npmrc
+.cargo/credentials*
+*.keypair.json
+*-keypair.json
+*wallet*.json
+*secret*.json
+id.json
+credentials*.json
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+keys/
+config.local.*

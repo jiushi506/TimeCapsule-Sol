@@ -1,0 +1,1597 @@
+{
+  "address": "4VLB65nCDvzL34cHfHvdizzc6eFMKoGqgSsWe5waBmFr",
+  "metadata": {
+    "name": "time_capsule",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "TimeCapsule Solana registry program"
+  },
+  "instructions": [
+    {
+      "name": "begin_capsule",
+      "discriminator": [
+        46,
+        20,
+        31,
+        85,
+        63,
+        252,
+        195,
+        77
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "arg",
+                "path": "capsule_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "capsule_id",
+          "type": "u64"
+        },
+        {
+          "name": "unlock_at",
+          "type": "i64"
+        },
+        {
+          "name": "mode",
+          "type": {
+            "defined": {
+              "name": "CapsuleMode"
+            }
+          }
+        },
+        {
+          "name": "format_version",
+          "type": "u16"
+        },
+        {
+          "name": "expected_payload_len",
+          "type": "u32"
+        },
+        {
+          "name": "payload_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "expected_title_len",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "cancel_upload",
+      "discriminator": [
+        104,
+        148,
+        195,
+        44,
+        148,
+        13,
+        14,
+        139
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "capsule"
+          ]
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "capsule.owner",
+                "account": "Capsule"
+              },
+              {
+                "kind": "account",
+                "path": "capsule.capsule_id",
+                "account": "Capsule"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finalize_capsule",
+      "discriminator": [
+        169,
+        40,
+        217,
+        191,
+        161,
+        145,
+        42,
+        218
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "capsule"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "capsule.owner",
+                "account": "Capsule"
+              },
+              {
+                "kind": "account",
+                "path": "capsule.capsule_id",
+                "account": "Capsule"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_recipient",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "fee_policy",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  45,
+                  112,
+                  111,
+                  108,
+                  105,
+                  99,
+                  121,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "sol_price"
+        },
+        {
+          "name": "usdc_price"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "FinalizeFeeArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_config",
+      "discriminator": [
+        208,
+        127,
+        21,
+        1,
+        194,
+        190,
+        196,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program_data"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "InitializeConfigArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_fee_policy",
+      "discriminator": [
+        107,
+        194,
+        188,
+        245,
+        143,
+        91,
+        122,
+        157
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_policy",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  45,
+                  112,
+                  111,
+                  108,
+                  105,
+                  99,
+                  121,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "FeePolicyArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "reclaim_expired_upload",
+      "docs": [
+        "Anyone may clean up an abandoned upload after its deadline. Rent returns to its original owner."
+      ],
+      "discriminator": [
+        128,
+        109,
+        150,
+        98,
+        131,
+        19,
+        233,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "owner_destination",
+          "writable": true
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "capsule.owner",
+                "account": "Capsule"
+              },
+              {
+                "kind": "account",
+                "path": "capsule.capsule_id",
+                "account": "Capsule"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_config",
+      "discriminator": [
+        29,
+        158,
+        252,
+        191,
+        10,
+        83,
+        219,
+        99
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_policy",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  45,
+                  112,
+                  111,
+                  108,
+                  105,
+                  99,
+                  121,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "UpdateConfigArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_fee_policy",
+      "discriminator": [
+        48,
+        158,
+        32,
+        112,
+        35,
+        162,
+        9,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_policy",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  45,
+                  112,
+                  111,
+                  108,
+                  105,
+                  99,
+                  121,
+                  45,
+                  118,
+                  49
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "FeePolicyArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "write_chunk",
+      "discriminator": [
+        93,
+        141,
+        167,
+        15,
+        209,
+        133,
+        137,
+        51
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "capsule"
+          ]
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "capsule.owner",
+                "account": "Capsule"
+              },
+              {
+                "kind": "account",
+                "path": "capsule.capsule_id",
+                "account": "Capsule"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "offset",
+          "type": "u32"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "write_title_chunk",
+      "discriminator": [
+        202,
+        131,
+        6,
+        194,
+        226,
+        143,
+        66,
+        194
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "capsule"
+          ]
+        },
+        {
+          "name": "capsule",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  112,
+                  115,
+                  117,
+                  108,
+                  101,
+                  45,
+                  118,
+                  49
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "capsule.owner",
+                "account": "Capsule"
+              },
+              {
+                "kind": "account",
+                "path": "capsule.capsule_id",
+                "account": "Capsule"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "offset",
+          "type": "u16"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Capsule",
+      "discriminator": [
+        212,
+        231,
+        77,
+        219,
+        58,
+        13,
+        118,
+        241
+      ]
+    },
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "FeePolicy",
+      "discriminator": [
+        98,
+        183,
+        86,
+        160,
+        232,
+        222,
+        82,
+        45
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "CapsuleFinalized",
+      "discriminator": [
+        250,
+        157,
+        174,
+        147,
+        198,
+        200,
+        226,
+        140
+      ]
+    },
+    {
+      "name": "CapsuleUploadStarted",
+      "discriminator": [
+        32,
+        30,
+        176,
+        231,
+        242,
+        27,
+        128,
+        118
+      ]
+    },
+    {
+      "name": "ConfigUpdated",
+      "discriminator": [
+        40,
+        241,
+        230,
+        122,
+        11,
+        19,
+        198,
+        194
+      ]
+    },
+    {
+      "name": "ProtocolFeePaid",
+      "discriminator": [
+        224,
+        102,
+        140,
+        88,
+        121,
+        78,
+        18,
+        63
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "ZeroAddress",
+      "msg": "A required address cannot be the zero public key."
+    },
+    {
+      "code": 6001,
+      "name": "InvalidPayloadLimit",
+      "msg": "Payload limit must be between 1 and 65,536 bytes."
+    },
+    {
+      "code": 6002,
+      "name": "InvalidLockDuration",
+      "msg": "Minimum lock duration cannot be negative."
+    },
+    {
+      "code": 6003,
+      "name": "AdminMustBeUpgradeAuthority",
+      "msg": "Config initialization must be signed by the program upgrade authority."
+    },
+    {
+      "code": 6004,
+      "name": "ProgramIsImmutable",
+      "msg": "An immutable program cannot initialize Config through its loader authority."
+    },
+    {
+      "code": 6005,
+      "name": "InvalidProgramData",
+      "msg": "ProgramData account is malformed or is not the expected loader state."
+    },
+    {
+      "code": 6006,
+      "name": "InvalidPayloadLength",
+      "msg": "Payload length is zero or exceeds the configured maximum."
+    },
+    {
+      "code": 6007,
+      "name": "UnsupportedFormatVersion",
+      "msg": "Only Capsule Open Format V1 and private V2 are accepted."
+    },
+    {
+      "code": 6008,
+      "name": "InvalidPublicTitleLength",
+      "msg": "Public title length must be 1 to 2,048 UTF-8 bytes."
+    },
+    {
+      "code": 6009,
+      "name": "PrivateTitleMustBeEmpty",
+      "msg": "Private capsules cannot contain a public title."
+    },
+    {
+      "code": 6010,
+      "name": "InvalidUnlockTime",
+      "msg": "Unlock time must exceed now plus the configured minimum lock duration."
+    },
+    {
+      "code": 6011,
+      "name": "ArithmeticOverflow",
+      "msg": "Checked timestamp or length arithmetic overflowed."
+    },
+    {
+      "code": 6012,
+      "name": "UploadExpired",
+      "msg": "Upload expired; begin a new capsule or reclaim this PDA."
+    },
+    {
+      "code": 6013,
+      "name": "EmptyChunk",
+      "msg": "Chunk must contain at least one byte."
+    },
+    {
+      "code": 6014,
+      "name": "ChunkTooLarge",
+      "msg": "Chunk exceeds the 3,800-byte program limit."
+    },
+    {
+      "code": 6015,
+      "name": "UnexpectedOffset",
+      "msg": "Payload chunks must be written at the exact next offset."
+    },
+    {
+      "code": 6016,
+      "name": "UnexpectedTitleOffset",
+      "msg": "Title chunks must be written at the exact next offset."
+    },
+    {
+      "code": 6017,
+      "name": "PayloadTooLong",
+      "msg": "Payload chunk would exceed the declared payload length."
+    },
+    {
+      "code": 6018,
+      "name": "TitleTooLong",
+      "msg": "Public title chunk would exceed the declared title length."
+    },
+    {
+      "code": 6019,
+      "name": "IncompletePayload",
+      "msg": "Payload is incomplete."
+    },
+    {
+      "code": 6020,
+      "name": "IncompleteTitle",
+      "msg": "Public title is incomplete."
+    },
+    {
+      "code": 6021,
+      "name": "InvalidTitleEncoding",
+      "msg": "Public title bytes are not valid UTF-8."
+    },
+    {
+      "code": 6022,
+      "name": "BlankPublicTitle",
+      "msg": "Public title must not be blank."
+    },
+    {
+      "code": 6023,
+      "name": "TooManyTitleCharacters",
+      "msg": "Public title exceeds 512 Unicode scalar values."
+    },
+    {
+      "code": 6024,
+      "name": "PayloadHashMismatch",
+      "msg": "Stored payload SHA-256 does not match the declared hash."
+    },
+    {
+      "code": 6025,
+      "name": "UnlockAlreadyPassed",
+      "msg": "Unlock time passed before the upload was finalized."
+    },
+    {
+      "code": 6026,
+      "name": "WrongFeeRecipient",
+      "msg": "Fee recipient does not match Config."
+    },
+    {
+      "code": 6027,
+      "name": "OwnerIsFeeRecipient",
+      "msg": "Reserved legacy error; same-wallet protocol fee payments are allowed."
+    },
+    {
+      "code": 6028,
+      "name": "AlreadyFinalized",
+      "msg": "Capsule is not in the Uploading state."
+    },
+    {
+      "code": 6029,
+      "name": "UploadNotExpired",
+      "msg": "Upload is not expired yet."
+    },
+    {
+      "code": 6030,
+      "name": "UnsupportedCapsuleVersion",
+      "msg": "Capsule account schema version is unsupported."
+    },
+    {
+      "code": 6031,
+      "name": "InvalidFeePolicy",
+      "msg": "Fee policy parameters are invalid."
+    },
+    {
+      "code": 6032,
+      "name": "InvalidOracleAccount",
+      "msg": "Price account is not the canonical Pyth Core account or layout."
+    },
+    {
+      "code": 6033,
+      "name": "UnverifiedOraclePrice",
+      "msg": "Price update must have Full verification."
+    },
+    {
+      "code": 6034,
+      "name": "WrongOracleFeed",
+      "msg": "Price feed ID differs from the configured feed."
+    },
+    {
+      "code": 6035,
+      "name": "InvalidOraclePrice",
+      "msg": "Price or exponent is invalid."
+    },
+    {
+      "code": 6036,
+      "name": "FutureOraclePrice",
+      "msg": "Price timestamp is in the future or invalid."
+    },
+    {
+      "code": 6037,
+      "name": "StaleOraclePrice",
+      "msg": "Price is too old. Refresh the fee review; no protocol fee was charged."
+    },
+    {
+      "code": 6038,
+      "name": "UncertainOraclePrice",
+      "msg": "Price confidence interval exceeds policy limits."
+    },
+    {
+      "code": 6039,
+      "name": "OraclePriceSkew",
+      "msg": "Price update times differ beyond policy limits."
+    },
+    {
+      "code": 6040,
+      "name": "FeePolicyChanged",
+      "msg": "Fee policy changed after review. Review the fee again."
+    },
+    {
+      "code": 6041,
+      "name": "FeeQuoteExpired",
+      "msg": "Fee review expired. Review the fee again."
+    },
+    {
+      "code": 6042,
+      "name": "ProtocolFeeCapExceeded",
+      "msg": "Current protocol fee exceeds the signed SOL limit."
+    },
+    {
+      "code": 6043,
+      "name": "Version2RequiresPrivateMode",
+      "msg": "Capsule Open Format V2 requires private mode."
+    }
+  ],
+  "types": [
+    {
+      "name": "Capsule",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "schema_version",
+            "type": "u8"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "capsule_id",
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "unlock_at",
+            "type": "i64"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "CapsuleMode"
+              }
+            }
+          },
+          {
+            "name": "format_version",
+            "type": "u16"
+          },
+          {
+            "name": "state",
+            "type": {
+              "defined": {
+                "name": "CapsuleState"
+              }
+            }
+          },
+          {
+            "name": "expected_payload_len",
+            "type": "u32"
+          },
+          {
+            "name": "uploaded_payload_len",
+            "type": "u32"
+          },
+          {
+            "name": "payload_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "expected_title_len",
+            "type": "u16"
+          },
+          {
+            "name": "uploaded_title_len",
+            "type": "u16"
+          },
+          {
+            "name": "public_title_bytes",
+            "type": "bytes"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "finalized_at",
+            "type": "i64"
+          },
+          {
+            "name": "payload",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CapsuleFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "capsule",
+            "type": "pubkey"
+          },
+          {
+            "name": "capsule_id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "unlock_at",
+            "type": "i64"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "CapsuleMode"
+              }
+            }
+          },
+          {
+            "name": "format_version",
+            "type": "u16"
+          },
+          {
+            "name": "payload_len",
+            "type": "u32"
+          },
+          {
+            "name": "payload_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "finalized_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CapsuleMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Public"
+          },
+          {
+            "name": "Private"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CapsuleState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uploading"
+          },
+          {
+            "name": "Final"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CapsuleUploadStarted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "capsule",
+            "type": "pubkey"
+          },
+          {
+            "name": "capsule_id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "unlock_at",
+            "type": "i64"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "CapsuleMode"
+              }
+            }
+          },
+          {
+            "name": "format_version",
+            "type": "u16"
+          },
+          {
+            "name": "expected_payload_len",
+            "type": "u32"
+          },
+          {
+            "name": "payload_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "expected_title_len",
+            "type": "u16"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "schema_version",
+            "type": "u8"
+          },
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_fee_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "max_payload_size",
+            "type": "u32"
+          },
+          {
+            "name": "min_lock_duration",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ConfigUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_fee_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "max_payload_size",
+            "type": "u32"
+          },
+          {
+            "name": "min_lock_duration",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "FixedSol"
+          },
+          {
+            "name": "UsdcEquivalentSol"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeePolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "schema_version",
+            "type": "u8"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "FeeMode"
+              }
+            }
+          },
+          {
+            "name": "revision",
+            "type": "u64"
+          },
+          {
+            "name": "target_usdc_micros",
+            "type": "u64"
+          },
+          {
+            "name": "max_price_age_seconds",
+            "type": "u32"
+          },
+          {
+            "name": "max_confidence_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_price_skew_seconds",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeePolicyArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "FeeMode"
+              }
+            }
+          },
+          {
+            "name": "target_usdc_micros",
+            "type": "u64"
+          },
+          {
+            "name": "max_price_age_seconds",
+            "type": "u32"
+          },
+          {
+            "name": "max_confidence_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_price_skew_seconds",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FinalizeFeeArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "max_protocol_fee_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "expected_policy_revision",
+            "type": "u64"
+          },
+          {
+            "name": "valid_until",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeConfigArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_fee_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "max_payload_size",
+            "type": "u32"
+          },
+          {
+            "name": "min_lock_duration",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolFeePaid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "capsule",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "lamports",
+            "type": "u64"
+          },
+          {
+            "name": "policy_revision",
+            "type": "u64"
+          },
+          {
+            "name": "target_usdc_micros",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateConfigArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fee_recipient",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "protocol_fee_lamports",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "max_payload_size",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "min_lock_duration",
+            "type": {
+              "option": "i64"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

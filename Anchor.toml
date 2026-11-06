@@ -1,0 +1,17 @@
+[toolchain]
+anchor_version = "1.2.1"
+solana_version = "4.2.1"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+time_capsule = "4VLB65nCDvzL34cHfHvdizzc6eFMKoGqgSsWe5waBmFr"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[workspace]
+members = ["programs/time_capsule"]
